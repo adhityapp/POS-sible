@@ -3,8 +3,8 @@
     <div class="row">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-body">
-                    <div class="row mb-2">
+                <div class="card-header bg-white">
+                    <div class="row">
                         <div class="col-md-6">
                             <h2 class="font-weight-bold mb-3">Products List</h2>
                         </div>
@@ -12,14 +12,21 @@
                             <input wire:model="search" type="text" class="form-control" placeholder="Search Product...">
                         </div>
                     </div>
+                </div>
+                <div class="card-body">
                     <div class="row">
                         @forelse ($products as $product)
                         <div class="col-md-3 mb-3">
                             <div class="card">
-                                <div class="card-body embed-responsive embed-responsive-16by9">
-                                    <img src="{{asset('storage/images/'. $product->image)}}" alt="product" class="img-fluid embed-responsive-item">
+                                <div class="card-body 
+                                {{-- embed-responsive embed-responsive-16by9 --}}
+                                ">
+                                    <img src="{{asset('storage/images/'. $product->image)}}" alt="product" style="object-fit: contain; width:100%; height:120px"
+                                    {{-- class="img-fluid embed-responsive-item" --}}
+                                    >
+                                    <button wire:click="addItem({{$product->id}})" class="btn btn-primary btn-sm" style="position: absolute; top:0;right:0;padding: 10px 15px;"><i class="fas fa-cart-plus fa-lg"></i></button>
                                 </div>
-                                <div class="card-footer">
+                                <div class="card-footer bg-white">
                                     <h6 class="font-weight-bold text-center">{{$product->name}}</h6>
                                     <div class="text-center">
                                         <label for="">Rp {{number_format($product->price,2,',','.')}}</label>
@@ -43,7 +50,7 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
-                    <h2 class="mb-3 text-center">Cart</h2>
+                    <h2 class="mb-3 text-center font-weight-bold">Cart</h2>
                     <p class="text-danger">
                         @if (session()->has('error'))
                             {{session('error')}}                            
@@ -52,10 +59,10 @@
                     <table class="table table-sm table-bordered table-hovered">
                         <thead class="thead-dark text-white">
                             <tr>
-                                <th>No.</th>
-                                <th>Name</th>
-                                <th class="text-center">Qty</th>
-                                <th>Price</th>
+                                <th class="text-center font-weight-bold">No.</th>
+                                <th class="text-center font-weight-bold">Name</th>
+                                <th class="text-center font-weight-bold">Qty</th>
+                                <th class="text-center font-weight-bold">Price</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -64,9 +71,9 @@
                                     <td>{{$index+1}}</td>
                                     <td>{{$cart['name']}}</td>
                                     <td class="text-center">
-                                        <a href="#" wire:click="decreaseItem('{{$cart['rowId']}}')" class="font-weight-bold text-secondary" style="font-size: 18px">< </a>
+                                        <button class="btn btn-info btn-sm" style="padding: 7px 10px;"><i wire:click="decreaseItem('{{$cart['rowId']}}')" class="font-weight-bold fas fa-minus"></i></button>
                                         {{$cart['quantity']}}
-                                        <a href="#" wire:click="increaseItem('{{$cart['rowId']}}')" class="font-weight-bold text-secondary" style="font-size: 18px"> ></a>
+                                        <button class="btn btn-primary btn-sm" style="padding: 7px 10px;"><i wire:click="increaseItem('{{$cart['rowId']}}')" class="font-weight-bold fas fa-plus"></i></button>                                        
                                     </td>
                                     <td>Rp {{number_format($cart['price'],2,',','.')}}</td>
                                     {{-- <td>
@@ -117,7 +124,6 @@
                     </div>
                     <div class="mt-4">
                         <button class="btn btn-success btn-block">Save Transaction</button>
-                        <button wire:click="deleteCart" class="btn btn-danger btn-block">Delete Transaction</button>
                     </div>
                 </div>
             </div>

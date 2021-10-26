@@ -80,13 +80,18 @@ class Order extends Component
         $rowId = "Cart" . $id;
         $cart = \Cart::Session(Auth::id())->getContent();
         $cekItemId = $cart->whereIn('id', $rowId);
+        $product = ProductModel::findOrFail($id);
 
         if ($cekItemId->isNotEmpty()) {
-            \Cart::session(Auth::id())->update($rowId, [
-                'quantity' => 1,
-            ]);
+            if ($product->qty + 1 == $cekItemId[$rowId]->quantity) {
+                session()->flash('error', 'Jumlah item kurang!');
+            } else {
+                \Cart::session(Auth::id())->update($rowId, [
+                    'quantity' => 1,
+                ]);
+            }
         } else {
-            $product = ProductModel::findOrFail($id);
+
             \Cart::session(Auth::id())->add([
                 'id' => "Cart" . $product->id,
                 'name' => $product->name,
@@ -140,7 +145,7 @@ class Order extends Component
         $cekItemId = $cart->whereIn('id', $id);
 
 
-        if ($cekItemId[$id]->quantity == 1) {
+        if ($cekItemId[$id]->quantity - 1 == 0) {
             $this->deleteCart($id);
         }
     }
